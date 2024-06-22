@@ -2,7 +2,7 @@ import { useCryptoData } from "../hooks/useCryptoData"
 import { formatToPercentage } from "../utils"
 import React, { useContext, useState } from "react"
 import { MyContext } from "../App"
-import { Button, Spinner } from "flowbite-react"
+import { Button, Spinner, TextInput } from "flowbite-react"
 import { CryptoData } from "../types"
 import CryptoChart from "./CryptoChart"
 import EditAssetModal from "./EditAssetModal"
@@ -15,12 +15,23 @@ const CryptoDashboard = () => {
     id: "",
     quantity: 0,
   })
-  const { data } = useCryptoData(assetData)
+  const { data, isLoading: isCryptoDataLoading } = useCryptoData(assetData)
   const {
     data: historicalData,
     refetch: refetchHistoricalData,
     isLoading,
   } = useCryptoHistoricalData(assetData.map((asset) => asset.id))
+  const [searchVal, setSearchVal] = useState<string>("")
+  const [filteredData, setFilteredData] = useState<CryptoData[]>(data ?? [])
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchVal(event.target.value)
+    setFilteredData(
+      data?.filter((d) =>
+        d.name.toLowerCase().includes(event.target.value.toLowerCase())
+      ) ?? []
+    )
+  }
 
   const handleDelete = (id: string) => {
     setAssetData((prevAssetData) =>
@@ -82,52 +93,64 @@ const CryptoDashboard = () => {
         Cryptocurrency Portfolio
       </h1>
 
-      {isLoading ? (
+      {isLoading || isCryptoDataLoading ? (
         <div className="flex items-center justify-center">
           <Spinner aria-label="Large spinner" size="lg" />
         </div>
       ) : (
-        historicalData &&
-        historicalData.length > 0 && <CryptoChart data={historicalData ?? []} />
+        <>
+          {historicalData && historicalData.length > 0 && (
+            <CryptoChart data={historicalData ?? []} />
+          )}
+          <div className="table-container">
+            <TextInput
+              id="search"
+              type="text"
+              placeholder="Search by name..."
+              value={searchVal}
+              onChange={handleSearchChange}
+              className="py-8 w-1/4"
+              color="info"
+            />
+            <table className="min-w-full">
+              <thead>
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Asset
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Quantity
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Price (USD)
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    % Change
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData ? (
+                  filteredData.map((crypto) => (
+                    <CryptoRow
+                      key={crypto.id}
+                      crypto={crypto}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td className="text-center text-white p-4" colSpan={4}>
+                      Add cryptocurrency to your portfolio.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-      <div className="table-container">
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Asset
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Quantity
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Price (USD)
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                % Change
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data ? (
-              data.map((crypto) => (
-                <CryptoRow
-                  key={crypto.id}
-                  crypto={crypto}
-                  onDelete={handleDelete}
-                  onEdit={handleEdit}
-                />
-              ))
-            ) : (
-              <tr>
-                <td className="text-center text-white p-4" colSpan={4}>
-                  Add cryptocurrency to your portfolio.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
     </>
   )
 }
