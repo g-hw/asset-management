@@ -6,3 +6,15 @@ html, body {
   font-family: 'Roboto', sans-serif; 
   background-color: #1E2329;
 }
+
+.table-container {
+  width: 100%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}

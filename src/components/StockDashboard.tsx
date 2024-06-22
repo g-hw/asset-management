@@ -1,70 +1,68 @@
-import { useCryptoData } from "../hooks/useCryptoData"
-import { formatToPercentage } from "../utils"
 import React, { useContext, useState } from "react"
 import { MyContext } from "../App"
-import { Button, Spinner } from "flowbite-react"
-import { CryptoData } from "../types"
-import CryptoChart from "./CryptoChart"
+import { Button } from "flowbite-react"
+import { StockData } from "../types"
 import EditAssetModal from "./EditAssetModal"
-import useCryptoHistoricalData from "../hooks/useCryptoHistoricalData"
+import { useStockData } from "../hooks/useStockData"
 
-const CryptoDashboard = () => {
-  const { assetData, setAssetData } = useContext(MyContext)
+const StockDashboard = () => {
+  const { stockData, setStockData } = useContext(MyContext)
   const [openEditModal, setOpenEditModal] = useState<boolean>(false)
   const [editData, setEditData] = useState<{ id: string; quantity: number }>({
     id: "",
     quantity: 0,
   })
-  const { data } = useCryptoData(assetData)
-  const {
-    data: historicalData,
-    refetch: refetchHistoricalData,
-    isLoading,
-  } = useCryptoHistoricalData(assetData.map((asset) => asset.id))
-
+  const { data } = useStockData(stockData)
   const handleDelete = (id: string) => {
-    setAssetData((prevAssetData) =>
-      prevAssetData.filter((asset) => asset.id !== id)
+    setStockData((prevStockData) =>
+      prevStockData.filter((stock) => stock.id !== id)
     )
   }
 
-  const handleEdit = (cryptoId: string, quantity: number) => {
+  const handleEdit = (stockId: string, quantity: number) => {
     setOpenEditModal(true)
-    setEditData({ id: cryptoId, quantity })
-    refetchHistoricalData()
+    setEditData({ id: stockId, quantity })
   }
 
-  const CryptoRow: React.FC<{
-    crypto: CryptoData
+  const StocksRow: React.FC<{
+    stock: StockData
     onDelete: (id: string) => void
     onEdit: (id: string, quantity: number) => void
-  }> = React.memo(({ crypto, onDelete, onEdit }) => {
+  }> = React.memo(({ stock, onDelete, onEdit }) => {
     return (
-      <tr key={crypto.id}>
-        <td className="flex items-center px-6 py-4 whitespace-nowrap text-white">
-          <img
-            src={crypto.image}
-            alt="crypto icon"
-            width="24"
-            height="24"
-            className="mr-2"
-          />
-          {crypto.name}
+      <tr key={stock?.["Global Quote"]?.["01. symbol"]}>
+        <td className="px-6 py-4 whitespace-nowrap text-white">
+          {stock?.["Global Quote"]?.["01. symbol"]}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-white">
-          {crypto?.quantity}
+          {
+            stockData.find(
+              (data) => data.id === stock?.["Global Quote"]?.["01. symbol"]
+            )?.quantity
+          }
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-white">
-          {crypto.current_price}
+          {stock?.["Global Quote"]?.["05. price"]}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-white">
-          {formatToPercentage(crypto.price_change_percentage_24h)}
+          {stock?.["Global Quote"]?.["10. change percent"]}
         </td>
         <td className="flex space-x-2 items-center ">
-          <Button onClick={() => onEdit(crypto.id, crypto.quantity ?? 0)}>
+          <Button
+            onClick={() =>
+              onEdit(
+                stock?.["Global Quote"]?.["01. symbol"],
+                stock.quantity ?? 0
+              )
+            }
+          >
             Edit
           </Button>
-          <Button onClick={() => onDelete(crypto.id)}>Delete</Button>
+          <Button
+            onClick={() => onDelete(stock?.["Global Quote"]?.["01. symbol"])}
+          >
+            Delete
+          </Button>
           <EditAssetModal
             openModal={openEditModal}
             setOpenModal={setOpenEditModal}
@@ -78,18 +76,7 @@ const CryptoDashboard = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-8 text-white">
-        Cryptocurrency Portfolio
-      </h1>
-
-      {isLoading ? (
-        <div className="flex items-center justify-center">
-          <Spinner aria-label="Large spinner" size="lg" />
-        </div>
-      ) : (
-        historicalData &&
-        historicalData.length > 0 && <CryptoChart data={historicalData ?? []} />
-      )}
+      <h1 className="text-3xl font-bold mb-8 text-white">Stocks Portfolio</h1>
       <div className="table-container">
         <table className="min-w-full">
           <thead>
@@ -110,10 +97,10 @@ const CryptoDashboard = () => {
           </thead>
           <tbody>
             {data ? (
-              data.map((crypto) => (
-                <CryptoRow
-                  key={crypto.id}
-                  crypto={crypto}
+              data.map((stock) => (
+                <StocksRow
+                  key={stock?.["Global Quote"]?.["01. symbol"]}
+                  stock={stock}
                   onDelete={handleDelete}
                   onEdit={handleEdit}
                 />
@@ -121,7 +108,7 @@ const CryptoDashboard = () => {
             ) : (
               <tr>
                 <td className="text-center text-white p-4" colSpan={4}>
-                  Add cryptocurrency to your portfolio.
+                  Add stocks to your portfolio.
                 </td>
               </tr>
             )}
@@ -132,4 +119,4 @@ const CryptoDashboard = () => {
   )
 }
 
-export default CryptoDashboard
+export default StockDashboard

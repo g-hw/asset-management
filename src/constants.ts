@@ -1,0 +1,48 @@
+import { Option } from "./types"
+
+// Using constant instead of fetching from API since API does not support pagination
+export const CRYPTO_OPTIONS: Option[] = [
+  { value: "bitcoin", label: "Bitcoin" },
+  { value: "ethereum", label: "Ethereum" },
+  { value: "tether", label: "Tether" },
+  { value: "binancecoin", label: "Binance Coin" },
+  { value: "cardano", label: "Cardano" },
+  { value: "ripple", label: "XRP" },
+  { value: "dogecoin", label: "Dogecoin" },
+  { value: "polkadot", label: "Polkadot" },
+  { value: "usd-coin", label: "USD Coin" },
+  { value: "uniswap", label: "Uniswap" },
+  { value: "bitcoin-cash", label: "Bitcoin Cash" },
+  { value: "litecoin", label: "Litecoin" },
+  { value: "solana", label: "Solana" },
+  { value: "chainlink", label: "Chainlink" },
+  { value: "wrapped-bitcoin", label: "Wrapped Bitcoin" },
+  { value: "matic-network", label: "Polygon" },
+  { value: "stellar", label: "Stellar" },
+  { value: "ethereum-classic", label: "Ethereum Classic" },
+  { value: "theta-token", label: "Theta Network" },
+  { value: "vechain", label: "VeChain" },
+]
+
+export const STOCKS_OPTIONS: Option[] = [
+  { value: "AAPL", label: "Apple Inc." },
+  { value: "MSFT", label: "Microsoft Corporation" },
+  { value: "GOOGL", label: "Alphabet Inc. (Google)" },
+  { value: "AMZN", label: "Amazon.com Inc." },
+  { value: "TSLA", label: "Tesla Inc." },
+  { value: "FB", label: "Meta Platforms Inc. (Facebook)" },
+  { value: "NVDA", label: "NVIDIA Corporation" },
+  { value: "NFLX", label: "Netflix Inc." },
+  { value: "PYPL", label: "PayPal Holdings Inc." },
+  { value: "INTC", label: "Intel Corporation" },
+  { value: "CRM", label: "Salesforce.com Inc." },
+  { value: "BABA", label: "Alibaba Group Holding Limited" },
+  { value: "UBER", label: "Uber Technologies Inc." },
+  { value: "SNAP", label: "Snap Inc." },
+  { value: "SQ", label: "Square Inc." },
+  { value: "TWTR", label: "Twitter Inc." },
+  { value: "DIS", label: "The Walt Disney Company" },
+  { value: "AMD", label: "Advanced Micro Devices Inc." },
+  { value: "ADBE", label: "Adobe Inc." },
+  { value: "PYPL", label: "PayPal Holdings Inc." },
+]
